@@ -8,7 +8,6 @@ import {
   getStockBySymbol,
 } from "../services/stockService";
 import { getStockComments } from "../services/commentService";
-import { getStockDataBySymbol } from "../services/stockDataService";
 import { useAuth } from "../context/AuthContext";
 import Comment from "../components/Comment";
 import CommentForm from "../components/CommentForm";
@@ -25,34 +24,13 @@ const StockDetail = () => {
 
   const fetchStock = async () => {
     try {
-      // Try to get the stock by symbol first
+      // Get the stock by symbol
       const result = await getStockBySymbol(symbol);
 
       if (result.success) {
-        // We found the stock by symbol, now we have its ID for all future interactions
         setStock(result.data);
       } else {
-        // If we can't find by symbol, try to get from stock data service
-        const stockDataResult = await getStockDataBySymbol(symbol);
-
-        if (stockDataResult.success) {
-          const stockData = stockDataResult.data;
-          setStock({
-            _id: stockData._id,
-            symbol: stockData.symbol,
-            name: stockData.name,
-            description: stockData.description,
-            currentPrice: stockData.currentPrice,
-            percentChange: stockData.percentChange,
-            likes: stockData.likes || 0,
-            dislikes: stockData.dislikes || 0,
-            likedBy: stockData.likedBy || [],
-            dislikedBy: stockData.dislikedBy || [],
-            commentCount: stockData.commentCount || 0,
-          });
-        } else {
-          setError("Stock not found");
-        }
+        setError("Stock not found");
       }
     } catch (error) {
       setError("Error fetching stock details");

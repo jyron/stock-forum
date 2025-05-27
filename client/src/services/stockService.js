@@ -1,14 +1,18 @@
 import api from "./api";
 
 // Get all stocks
-export const getAllStocks = async () => {
+export const getAllStocks = async (searchTerm = "") => {
   try {
-    const res = await api.get("/api/stocks");
+    console.log("Search term in service:", searchTerm);
+    // Always include the search parameter, even if empty
+    const params = { search: searchTerm };
+    const res = await api.get("/api/stocks", { params });
     return {
       success: true,
       data: res.data,
     };
   } catch (error) {
+    console.error("Error in getAllStocks:", error);
     return {
       success: false,
       error: error.response?.data?.message || "Failed to fetch stocks",
@@ -32,7 +36,7 @@ export const getStockById = async (id) => {
   }
 };
 
-// Get stock by symbol (for client-side display only)
+// Get stock by symbol
 export const getStockBySymbol = async (symbol) => {
   try {
     const res = await api.get(`/api/stocks/symbol/${symbol}`);

@@ -17,9 +17,35 @@ const Comment = require("../models/comment.model");
  */
 exports.getAllStocks = async (req, res) => {
   try {
-    const stocks = await Stock.find()
+    const { search } = req.query;
+    console.log("Search query received:", search);
+    console.log("Full query object:", req.query);
+
+    let query = {};
+
+    // If search term is provided, search in both symbol and name fields
+    if (search && search.trim() !== "") {
+      const searchRegex = new RegExp(search.trim(), "i");
+      query = {
+        $or: [
+          { symbol: { $regex: searchRegex } },
+          { name: { $regex: searchRegex } },
+        ],
+      };
+      console.log("MongoDB query:", JSON.stringify(query));
+    }
+
+    const stocks = await Stock.find(query)
       .sort({ createdAt: -1 })
       .populate("createdBy", "username");
+
+    console.log("Found stocks:", stocks.length);
+    if (stocks.length > 0) {
+      console.log("First stock:", {
+        symbol: stocks[0].symbol,
+        name: stocks[0].name,
+      });
+    }
 
     // Add comment counts to each stock
     const stocksWithCommentCounts = await Promise.all(
@@ -34,6 +60,7 @@ exports.getAllStocks = async (req, res) => {
 
     res.status(200).json(stocksWithCommentCounts);
   } catch (error) {
+    console.error("Error in getAllStocks:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };

@@ -615,97 +615,9 @@ img {
   margin-top: auto;
 }
 
-/* S&P 500 Stocks Page */
-.sp500-page {
-  padding: 1rem 0;
-}
-
-.sp500-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 1.5rem 0;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.search-container {
-  flex: 1;
-  max-width: 400px;
-}
-
-.search-input {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.stock-table-container {
-  overflow-x: auto;
-  margin-top: 1rem;
-}
-
-.stock-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-  background-color: white;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.stock-table th,
-.stock-table td {
-  padding: 0.75rem 1rem;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-}
-
-.stock-table th {
-  background-color: var(--primary-color);
-  color: white;
-  font-weight: bold;
-}
-
-.stock-table tr:last-child td {
-  border-bottom: none;
-}
-
-.stock-table tr:hover {
-  background-color: #f9f9f9;
-}
-
-.stock-symbol {
-  font-weight: bold;
-  color: var(--primary-color);
-}
-
-.positive-change {
-  color: var(--success-color);
-  font-weight: bold;
-}
-
-.negative-change {
-  color: var(--danger-color);
-  font-weight: bold;
-}
-
 /* Responsive */
 @media (max-width: 768px) {
   .stock-grid {
     grid-template-columns: 1fr;
-  }
-
-  .sp500-actions {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .search-container {
-    max-width: 100%;
-    width: 100%;
   }
 }
