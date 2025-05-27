@@ -1,21 +1,18 @@
-import axios from 'axios';
-
-// Configure axios to use the backend server URL
-axios.defaults.baseURL = 'http://localhost:5000';
+import api from "./api";
 
 // Get all comments for a stock
 export const getStockComments = async (stockId) => {
   try {
-    // Always use the stock's database ID
-    const res = await axios.get(`/api/comments/stock/${stockId}`);
+    const res = await api.get(`/api/comments/stock/${stockId}`);
     return {
       success: true,
-      data: res.data
+      data: res.data,
     };
   } catch (error) {
+    console.error("Error fetching comments:", error);
     return {
       success: false,
-      error: error.response?.data?.message || 'Failed to fetch comments'
+      error: error.response?.data?.message || "Failed to fetch comments",
     };
   }
 };
@@ -23,21 +20,27 @@ export const getStockComments = async (stockId) => {
 // Create a new comment
 export const createComment = async (commentData) => {
   try {
-    // Ensure isAnonymous is included in the request
     const dataToSend = {
-      ...commentData,
-      isAnonymous: commentData.isAnonymous || false
+      content: commentData.content,
+      stockId: commentData.stockId,
+      isAnonymous: commentData.isAnonymous || false,
     };
-    
-    const res = await axios.post('/api/comments', dataToSend);
+
+    // Add parentCommentId if it's a reply
+    if (commentData.parentCommentId) {
+      dataToSend.parentCommentId = commentData.parentCommentId;
+    }
+
+    const res = await api.post("/api/comments", dataToSend);
     return {
       success: true,
-      data: res.data
+      data: res.data,
     };
   } catch (error) {
+    console.error("Error creating comment:", error);
     return {
       success: false,
-      error: error.response?.data?.message || 'Failed to create comment'
+      error: error.response?.data?.message || "Failed to create comment",
     };
   }
 };
@@ -45,15 +48,16 @@ export const createComment = async (commentData) => {
 // Update a comment
 export const updateComment = async (id, content) => {
   try {
-    const res = await axios.put(`/api/comments/${id}`, { content });
+    const res = await api.put(`/api/comments/${id}`, { content });
     return {
       success: true,
-      data: res.data
+      data: res.data,
     };
   } catch (error) {
+    console.error("Error updating comment:", error);
     return {
       success: false,
-      error: error.response?.data?.message || 'Failed to update comment'
+      error: error.response?.data?.message || "Failed to update comment",
     };
   }
 };
@@ -61,15 +65,16 @@ export const updateComment = async (id, content) => {
 // Delete a comment
 export const deleteComment = async (id) => {
   try {
-    const res = await axios.delete(`/api/comments/${id}`);
+    const res = await api.delete(`/api/comments/${id}`);
     return {
       success: true,
-      data: res.data
+      data: res.data,
     };
   } catch (error) {
+    console.error("Error deleting comment:", error);
     return {
       success: false,
-      error: error.response?.data?.message || 'Failed to delete comment'
+      error: error.response?.data?.message || "Failed to delete comment",
     };
   }
 };
@@ -77,15 +82,16 @@ export const deleteComment = async (id) => {
 // Like a comment
 export const likeComment = async (id) => {
   try {
-    const res = await axios.post(`/api/comments/${id}/like`);
+    const res = await api.post(`/api/comments/${id}/like`);
     return {
       success: true,
-      data: res.data
+      data: res.data,
     };
   } catch (error) {
+    console.error("Error liking comment:", error);
     return {
       success: false,
-      error: error.response?.data?.message || 'Failed to like comment'
+      error: error.response?.data?.message || "Failed to like comment",
     };
   }
 };
@@ -93,15 +99,16 @@ export const likeComment = async (id) => {
 // Dislike a comment
 export const dislikeComment = async (id) => {
   try {
-    const res = await axios.post(`/api/comments/${id}/dislike`);
+    const res = await api.post(`/api/comments/${id}/dislike`);
     return {
       success: true,
-      data: res.data
+      data: res.data,
     };
   } catch (error) {
+    console.error("Error disliking comment:", error);
     return {
       success: false,
-      error: error.response?.data?.message || 'Failed to dislike comment'
+      error: error.response?.data?.message || "Failed to dislike comment",
     };
   }
 };

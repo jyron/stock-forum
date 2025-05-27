@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getAllStockData, importSP500Stocks } from '../services/stockDataService';
+import { getStocks, importSP500Stocks } from '../services/stockService';
 import { useAuth } from '../context/AuthContext';
 
 const SP500Stocks = () => {
-  const [stockData, setStockData] = useState([]);
+  const [stocks, setStocks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [importing, setImporting] = useState(false);
   const [error, setError] = useState('');

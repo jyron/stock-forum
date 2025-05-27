@@ -11,6 +11,10 @@ const commentSchema = new mongoose.Schema({
     ref: 'User',
     required: false
   },
+  anonymousAuthorId: {
+    type: String,
+    required: false
+  },
   isAnonymous: {
     type: Boolean,
     default: false
@@ -39,9 +43,15 @@ const commentSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
+  likedByAnonymous: [{
+    type: String
+  }],
   dislikedBy: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
+  }],
+  dislikedByAnonymous: [{
+    type: String
   }],
   // For efficient retrieval of comment threads
   isReply: {

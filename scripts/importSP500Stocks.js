@@ -11,24 +11,11 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
-// Define the StockData schema directly in this script to avoid import issues
-const stockDataSchema = new mongoose.Schema({
-  symbol: { type: String, required: true, unique: true },
-  name: { type: String, required: true },
-  exchange: { type: String },
-  currency: { type: String },
-  open: { type: Number },
-  high: { type: Number },
-  low: { type: Number },
-  close: { type: Number },
-  volume: { type: Number },
-  previousClose: { type: Number },
-  percentChange: { type: Number },
-  lastUpdated: { type: Date, default: Date.now }
-});
+// Import the consolidated Stock model
+const Stock = require('../server/models/stock.model');
 
-// Create the model
-const StockData = mongoose.model('StockData', stockDataSchema);
+// We no longer need the StockData model since we've consolidated it into Stock
+// The Stock model now includes all fields from both schemas
 
 // Connect to MongoDB with proper options for mongoose 8.x
 const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/stock-forum';

@@ -17,9 +17,25 @@ const stockSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  // Market data
+  exchange: {
+    type: String,
+    trim: true
+  },
+  currency: {
+    type: String,
+    trim: true
+  },
   currentPrice: {
     type: Number
   },
+  previousClose: {
+    type: Number
+  },
+  percentChange: {
+    type: Number
+  },
+  // User interaction data
   likes: {
     type: Number,
     default: 0
@@ -28,7 +44,6 @@ const stockSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  // Store users who liked/disliked to prevent duplicate votes
   likedBy: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
@@ -37,12 +52,13 @@ const stockSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
+  // Ownership/creation metadata
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-  createdAt: {
+  lastUpdated: {
     type: Date,
     default: Date.now
   }

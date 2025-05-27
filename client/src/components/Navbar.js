@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -8,7 +8,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   return (
@@ -19,7 +19,6 @@ const Navbar = () => {
         </Link>
         <div className="navbar-menu">
           <Link to="/">Home</Link>
-          <Link to="/sp500">S&P 500</Link>
           {isAuthenticated() ? (
             <>
               <Link to="/add-stock">Add Stock</Link>
