@@ -115,10 +115,9 @@ const Comment = ({ comment = {}, stockId, onUpdate, isReply = false }) => {
           {getAuthorName()}
           {comment.isAnonymous && <span className="anonymous-badge">👤</span>}
         </div>
-        <span className="comment-date">{formatDate(comment.createdAt)}</span>
       </div>
 
-      <div className="comment-content">{comment.content}</div>
+      <div className="comment-content">💭 {comment.content}</div>
 
       <div className="comment-footer">
         <div className="comment-actions">

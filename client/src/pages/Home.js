@@ -1,74 +1,92 @@
-import React, { useState, useEffect } from "react";
-import StockCard from "../components/StockCard";
+import React, { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { getAllStocks } from "../services/stockService";
+import StockCard from "../components/StockCard";
+import "../styles/Yahoo90s.css";
 
 const Home = () => {
   const [stocks, setStocks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const { user } = useAuth();
 
-  const fetchStocks = async () => {
-    setLoading(true);
-    setError("");
-
+  const fetchStocks = useCallback(async () => {
     try {
-      console.log("Fetching stocks with search term:", searchTerm);
-      const stocksResult = await getAllStocks(searchTerm);
-      console.log("Stocks result:", stocksResult);
-      if (stocksResult.success) {
-        setStocks(stocksResult.data);
+      setLoading(true);
+      const response = await getAllStocks(searchTerm);
+      if (response.success) {
+        setStocks(response.data);
+        setError(null);
       } else {
-        setError(stocksResult.error || "Failed to fetch stocks");
+        setError(response.error || "Failed to fetch stocks");
+        setStocks([]);
       }
     } catch (err) {
+      setError("Failed to fetch stocks. Please try again later.");
       console.error("Error fetching stocks:", err);
-      setError("Failed to fetch stocks");
+      setStocks([]);
     } finally {
       setLoading(false);
     }
-  };
-
-  // Fetch data on component mount and when search term changes
-  useEffect(() => {
-    fetchStocks();
   }, [searchTerm]);
 
-  const handleTestSearch = () => {
-    setSearchTerm("AAPL");
+  useEffect(() => {
+    fetchStocks();
+  }, [fetchStocks]);
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
   };
 
   return (
-    <div className="home-page">
-      <h1>Stock Forum</h1>
-      <p>Discuss and rate your favorite stocks</p>
+    <div className="home-container">
+      <header className="main-header">
+        <h1>Stock Forum</h1>
+        <p className="tagline">
+          Join the discussion about your favorite stocks
+        </p>
+      </header>
 
       <div className="search-container">
         <input
           type="text"
           placeholder="Search stocks by symbol or name..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearch}
           className="search-input"
         />
-        <button onClick={handleTestSearch} className="btn btn-primary">
-          Test Search AAPL
-        </button>
       </div>
 
-      {error && <div className="alert alert-danger">{error}</div>}
+      {user && (
+        <div className="action-bar">
+          <Link to="/stocks/new" className="btn btn-primary">
+            Add New Stock
+          </Link>
+        </div>
+      )}
+
+      {error && <div className="alert alert-error">{error}</div>}
 
       {loading ? (
         <div className="loading">Loading stocks...</div>
-      ) : stocks.length === 0 ? (
-        <div className="alert alert-info">
-          No stocks found. <a href="/add-stock">Add a stock</a> to get started!
-        </div>
       ) : (
         <div className="stock-grid">
-          {stocks.map((stock) => (
-            <StockCard key={stock._id} stock={stock} onUpdate={fetchStocks} />
-          ))}
+          {stocks.length === 0 ? (
+            <div className="no-stocks">
+              <p>No stocks found. Be the first to add one!</p>
+              {user && (
+                <Link to="/stocks/new" className="btn btn-primary">
+                  Add Stock
+                </Link>
+              )}
+            </div>
+          ) : (
+            stocks.map((stock) => (
+              <StockCard key={stock._id} stock={stock} onUpdate={fetchStocks} />
+            ))
+          )}
         </div>
       )}
     </div>

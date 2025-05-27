@@ -1,0 +1,324 @@
+/* Yahoo90s - Classic Yahoo! Finance 90s styling */
+:root {
+  --primary-color: #400080;
+  --secondary-color: #0066cc;
+  --background-color: #ffffff;
+  --text-color: #000000;
+  --link-color: #0000ff;
+  --visited-link-color: #551a8b;
+  --border-color: #cccccc;
+  --hover-color: #f0f0f0;
+  --card-background: #ffffff;
+  --header-background: linear-gradient(to bottom, #400080, #0066cc);
+  --button-hover: #004080;
+  --success-color: #008000;
+  --error-color: #cc0000;
+  --table-header: #e6e6e6;
+  --table-row-even: #f9f9f9;
+  --table-row-odd: #ffffff;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  background-image: url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
+  background-repeat: repeat;
+}
+
+.home-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.main-header {
+  background: var(--header-background);
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: white;
+}
+
+.main-header h1 {
+  margin: 0;
+  font-size: 2.5em;
+  font-weight: bold;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.tagline {
+  color: #ffffff;
+  margin: 10px 0 0;
+  font-style: italic;
+}
+
+.search-container {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  background-color: white;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+}
+
+.stock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.stock-card {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  padding: 15px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.stock-card:hover {
+  border-color: var(--secondary-color);
+}
+
+.stock-header {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.stock-header h2 {
+  margin: 0;
+  color: var(--primary-color);
+  font-size: 1.5em;
+}
+
+.symbol {
+  font-weight: bold;
+  color: var(--secondary-color);
+}
+
+.discussion-stats {
+  color: #666666;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+.stock-info {
+  margin: 15px 0;
+  background-color: var(--table-row-even);
+  padding: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.price {
+  font-size: 1.3em;
+  font-weight: bold;
+  margin: 5px 0;
+  color: var(--text-color);
+}
+
+.percent-change {
+  margin: 5px 0;
+  font-weight: bold;
+  padding: 3px 6px;
+  border: 1px solid;
+}
+
+.percent-change.positive {
+  color: var(--success-color);
+  border-color: var(--success-color);
+  background-color: #e6ffe6;
+}
+
+.percent-change.negative {
+  color: var(--error-color);
+  border-color: var(--error-color);
+  background-color: #ffe6e6;
+}
+
+.stock-actions {
+  margin: 15px 0;
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-block;
+  background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+}
+
+.btn-primary {
+  background: linear-gradient(
+    to bottom,
+    var(--secondary-color),
+    var(--button-hover)
+  );
+  color: white;
+  border-color: var(--button-hover);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(
+    to bottom,
+    var(--button-hover),
+    var(--secondary-color)
+  );
+}
+
+.btn:not(.btn-primary) {
+  background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+  color: var(--text-color);
+}
+
+.btn:not(.btn-primary):hover {
+  background: linear-gradient(to bottom, #f0f0f0, #e6e6e6);
+}
+
+.stock-footer {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
+  color: #666666;
+  font-size: 0.9em;
+}
+
+.alert {
+  padding: 15px;
+  margin: 20px 0;
+  border: 1px solid;
+  border-radius: 3px;
+}
+
+.alert-error {
+  background-color: #ffe6e6;
+  color: var(--error-color);
+  border-color: var(--error-color);
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #666666;
+}
+
+.no-stocks {
+  text-align: center;
+  padding: 30px;
+  background-color: var(--table-row-even);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+}
+
+/* Links */
+a {
+  color: var(--link-color);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--visited-link-color);
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+/* Comment Styles */
+.comment {
+  background-color: var(--table-row-even);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.comment-reply {
+  margin-left: 30px;
+  background-color: var(--table-row-odd);
+}
+
+.comment-header {
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.comment-author {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.comment-content {
+  color: var(--text-color);
+  margin: 10px 0;
+  line-height: 1.6;
+}
+
+.comment-footer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vote-btn {
+  background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 4px 8px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.vote-btn:hover {
+  background: linear-gradient(to bottom, #f0f0f0, #e6e6e6);
+}
+
+.vote-btn.active.liked {
+  background: linear-gradient(to bottom, #e6ffe6, #ccffcc);
+  border-color: var(--success-color);
+  color: var(--success-color);
+}
+
+.vote-btn.active.disliked {
+  background: linear-gradient(to bottom, #ffe6e6, #ffcccc);
+  border-color: var(--error-color);
+  color: var(--error-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .stock-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .main-header h1 {
+    font-size: 2em;
+  }
+
+  .home-container {
+    padding: 15px;
+  }
+}
