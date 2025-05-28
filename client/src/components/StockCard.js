@@ -1,10 +1,29 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { likeStock, dislikeStock } from "../services/stockService";
+import { getStockComments } from "../services/commentService";
 
 const StockCard = ({ stock, onUpdate }) => {
   const { isAuthenticated, user } = useAuth();
+  const [comments, setComments] = useState([]);
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      if (stock && stock._id) {
+        const result = await getStockComments(stock._id);
+        if (result.success) {
+          // Sort comments by date (newest first) and take first 2
+          const sortedComments = result.data
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 2);
+          setComments(sortedComments);
+        }
+      }
+    };
+
+    fetchComments();
+  }, [stock]);
 
   const handleLike = async () => {
     if (!isAuthenticated()) {
@@ -44,6 +63,11 @@ const StockCard = ({ stock, onUpdate }) => {
   const isDisliked = user && stock.dislikedBy?.includes(user.id);
   const isAuthor = user && stock.createdBy?._id === user.id;
 
+  const getAuthorName = (comment) => {
+    if (comment.isAnonymous) return "Anonymous";
+    return comment.author?.username || "Unknown";
+  };
+
   return (
     <div className="stock-card">
       <div className="stock-header">
@@ -79,6 +103,18 @@ const StockCard = ({ stock, onUpdate }) => {
             : "N/A"}
         </p>
       </div>
+
+      {comments.length > 0 && (
+        <div className="recent-comments">
+          <h3>Recent Comments</h3>
+          {comments.map((comment) => (
+            <div key={comment._id} className="comment-preview">
+              <div className="comment-author">{getAuthorName(comment)}</div>
+              <div className="comment-content">💭 {comment.content}</div>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="stock-actions">
         <Link to={`/stocks/${stock.symbol}`} className="btn btn-primary">

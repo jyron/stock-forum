@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getAllStocks } from "../services/stockService";
-import StockCard from "../components/StockCard";
+import StockTable from "../components/StockTable";
 import "../styles/Yahoo90s.css";
 
 const Home = () => {
@@ -10,84 +10,72 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const { user } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
-  const fetchStocks = useCallback(async () => {
+  const fetchStocks = async () => {
     try {
       setLoading(true);
-      const response = await getAllStocks(searchTerm);
-      if (response.success) {
-        setStocks(response.data);
-        setError(null);
+      const result = await getAllStocks();
+      if (result.success) {
+        setStocks(result.data);
       } else {
-        setError(response.error || "Failed to fetch stocks");
-        setStocks([]);
+        setError(result.error || "Failed to fetch stocks");
       }
     } catch (err) {
-      setError("Failed to fetch stocks. Please try again later.");
-      console.error("Error fetching stocks:", err);
-      setStocks([]);
+      setError("An error occurred while fetching stocks");
     } finally {
       setLoading(false);
     }
-  }, [searchTerm]);
+  };
 
   useEffect(() => {
     fetchStocks();
-  }, [fetchStocks]);
+  }, []);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
+
+  const filteredStocks = stocks.filter(
+    (stock) =>
+      stock.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      stock.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (loading) {
+    return <div className="loading">Loading stocks...</div>;
+  }
+
+  if (error) {
+    return <div className="alert alert-error">{error}</div>;
+  }
 
   return (
     <div className="home-container">
       <header className="main-header">
         <h1>Stock Forum</h1>
         <p className="tagline">
-          Join the discussion about your favorite stocks
+          Discuss and share insights about your favorite stocks
         </p>
       </header>
 
       <div className="search-container">
         <input
           type="text"
+          className="search-input"
           placeholder="Search stocks by symbol or name..."
           value={searchTerm}
           onChange={handleSearch}
-          className="search-input"
         />
       </div>
 
-      {user && (
-        <div className="action-bar">
-          <Link to="/stocks/new" className="btn btn-primary">
-            Add New Stock
-          </Link>
+      {filteredStocks.length === 0 ? (
+        <div className="no-stocks">
+          No stocks found matching your search criteria.
         </div>
-      )}
-
-      {error && <div className="alert alert-error">{error}</div>}
-
-      {loading ? (
-        <div className="loading">Loading stocks...</div>
       ) : (
-        <div className="stock-grid">
-          {stocks.length === 0 ? (
-            <div className="no-stocks">
-              <p>No stocks found. Be the first to add one!</p>
-              {user && (
-                <Link to="/stocks/new" className="btn btn-primary">
-                  Add Stock
-                </Link>
-              )}
-            </div>
-          ) : (
-            stocks.map((stock) => (
-              <StockCard key={stock._id} stock={stock} onUpdate={fetchStocks} />
-            ))
-          )}
-        </div>
+        <StockTable stocks={filteredStocks} onUpdate={fetchStocks} />
       )}
     </div>
   );

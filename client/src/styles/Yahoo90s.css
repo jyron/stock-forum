@@ -166,6 +166,7 @@ body {
   text-decoration: none;
   display: inline-block;
   background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+  color: var(--text-color);
 }
 
 .btn-primary {
@@ -184,6 +185,24 @@ body {
     var(--button-hover),
     var(--secondary-color)
   );
+}
+
+.btn-primary:visited {
+  color: white;
+  background: linear-gradient(
+    to bottom,
+    var(--secondary-color),
+    var(--button-hover)
+  );
+}
+
+.btn-primary:active {
+  background: linear-gradient(
+    to bottom,
+    var(--button-hover),
+    var(--secondary-color)
+  );
+  color: white;
 }
 
 .btn:not(.btn-primary) {
@@ -306,6 +325,205 @@ a:hover {
   background: linear-gradient(to bottom, #ffe6e6, #ffcccc);
   border-color: var(--error-color);
   color: var(--error-color);
+}
+
+/* Recent Comments in Stock Card */
+.recent-comments {
+  margin: 15px 0;
+  padding: 10px;
+  background-color: var(--table-row-even);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+}
+
+.recent-comments h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.1em;
+  color: var(--primary-color);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 5px;
+}
+
+.comment-preview {
+  margin-bottom: 10px;
+  padding: 8px;
+  background-color: var(--table-row-odd);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+}
+
+.comment-preview:last-child {
+  margin-bottom: 0;
+}
+
+.comment-preview .comment-author {
+  font-weight: bold;
+  color: var(--primary-color);
+  font-size: 0.9em;
+  margin-bottom: 5px;
+}
+
+.comment-preview .comment-content {
+  font-size: 0.9em;
+  color: var(--text-color);
+  line-height: 1.4;
+}
+
+/* Stock Table Styles */
+.stock-table-container {
+  margin: 20px 0;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  background-color: var(--card-background);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.stock-table {
+  width: 100%;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 80px 2fr 1fr 1fr 1fr 2fr 1fr;
+  gap: 10px;
+  padding: 12px;
+  background-color: var(--table-header);
+  border-bottom: 2px solid var(--border-color);
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 80px 2fr 1fr 1fr 1fr 2fr 1fr;
+  gap: 10px;
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+  align-items: center;
+}
+
+.table-row:hover {
+  background-color: var(--hover-color);
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.col-symbol .symbol {
+  font-weight: bold;
+  color: var(--secondary-color);
+}
+
+.col-price {
+  font-weight: bold;
+}
+
+.stats-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.9em;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.vote-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.vote-btn {
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.vote-btn:hover {
+  background: linear-gradient(to bottom, #f0f0f0, #e6e6e6);
+}
+
+.vote-btn.active.liked {
+  background: linear-gradient(to bottom, #e6ffe6, #ccffcc);
+  border-color: var(--success-color);
+  color: var(--success-color);
+}
+
+.vote-btn.active.disliked {
+  background: linear-gradient(to bottom, #ffe6e6, #ffcccc);
+  border-color: var(--error-color);
+  color: var(--error-color);
+}
+
+.comment-preview {
+  background-color: var(--table-row-even);
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+}
+
+.comment-preview .comment-author {
+  font-weight: bold;
+  color: var(--primary-color);
+  font-size: 0.9em;
+  margin-bottom: 4px;
+}
+
+.comment-preview .comment-content {
+  font-size: 0.9em;
+  color: var(--text-color);
+  line-height: 1.4;
+}
+
+.no-comment {
+  color: #666;
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+/* Responsive adjustments for table */
+@media (max-width: 1200px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 80px 1.5fr 1fr 1fr 1fr 1.5fr 1fr;
+  }
+}
+
+@media (max-width: 992px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 80px 1fr 1fr 1fr 1fr 1fr 1fr;
+  }
+
+  .col-name,
+  .col-comment {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 80px 1fr 1fr 1fr 1fr;
+  }
+
+  .col-stats,
+  .col-actions {
+    display: none;
+  }
 }
 
 /* Responsive adjustments */
