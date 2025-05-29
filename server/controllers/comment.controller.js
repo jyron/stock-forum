@@ -108,84 +108,48 @@ exports.getStockComments = async (req, res) => {
  */
 exports.createComment = async (req, res) => {
   try {
-    const { content, stockId, parentCommentId, isAnonymous } = req.body;
+    const { content, stockId, parentId, isAnonymous } = req.body;
+    const userId = req.user.id;
 
-    // Validate required fields
-    if (!content || !content.trim()) {
-      return res.status(400).json({ message: "Comment content is required" });
-    }
-
-    if (!stockId) {
-      return res.status(400).json({ message: "Stock ID is required" });
-    }
-
-    // Validate MongoDB ObjectId format
-    if (!mongoose.Types.ObjectId.isValid(stockId)) {
-      return res.status(400).json({ message: "Invalid stock ID format" });
-    }
-
-    // Check if stock exists
-    const stock = await Stock.findById(stockId);
-    if (!stock) {
-      return res.status(404).json({ message: "Stock not found" });
-    }
-
-    // If it's a reply, validate parent comment
-    if (parentCommentId) {
-      if (!mongoose.Types.ObjectId.isValid(parentCommentId)) {
-        return res
-          .status(400)
-          .json({ message: "Invalid parent comment ID format" });
-      }
-
-      const parentComment = await Comment.findById(parentCommentId);
-      if (!parentComment) {
-        return res.status(404).json({ message: "Parent comment not found" });
-      }
-
-      // Ensure parent comment belongs to the same stock
-      if (parentComment.stock.toString() !== stockId) {
-        return res
-          .status(400)
-          .json({ message: "Parent comment does not belong to this stock" });
-      }
-    }
-
-    // Create comment object
-    const commentData = {
-      content: content.trim(),
+    // Create the comment
+    const comment = new Comment({
+      content,
+      author: userId,
       stock: stockId,
-      isReply: !!parentCommentId,
-      isAnonymous: !!isAnonymous || !req.userId,
-    };
+      parentComment: parentId,
+      isAnonymous,
+    });
 
-    // Add parent comment reference if it's a reply
-    if (parentCommentId) {
-      commentData.parentComment = parentCommentId;
-    }
-
-    // Add author if user is authenticated and not posting anonymously
-    if (req.userId && !isAnonymous) {
-      commentData.author = req.userId;
-    } else {
-      // For anonymous comments, generate a session-based ID
-      const sessionId = req.sessionID || req.ip || "anonymous_" + Date.now();
-      commentData.anonymousAuthorId = sessionId;
-    }
-
-    const comment = new Comment(commentData);
     await comment.save();
 
-    // Populate author information before sending response
+    // Update the stock's lastComment field
+    const stock = await Stock.findById(stockId);
+    if (stock) {
+      stock.lastComment = {
+        content:
+          content.length > 200 ? content.substring(0, 197) + "..." : content,
+        author: isAnonymous ? "Anonymous" : req.user.username,
+        authorId: isAnonymous ? null : userId,
+        date: new Date(),
+        commentId: comment._id,
+      };
+      stock.commentCount = (stock.commentCount || 0) + 1;
+      await stock.save();
+    }
+
+    // Populate author information for the response
     await comment.populate("author", "username");
 
     res.status(201).json({
-      message: "Comment created successfully",
-      comment,
+      success: true,
+      data: comment,
     });
   } catch (error) {
     console.error("Error creating comment:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({
+      success: false,
+      error: "Failed to create comment",
+    });
   }
 };
 
@@ -256,39 +220,67 @@ exports.updateComment = async (req, res) => {
 exports.deleteComment = async (req, res) => {
   try {
     const { id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid comment ID format" });
-    }
+    const userId = req.user.id;
 
     const comment = await Comment.findById(id);
     if (!comment) {
-      return res.status(404).json({ message: "Comment not found" });
+      return res.status(404).json({
+        success: false,
+        error: "Comment not found",
+      });
     }
 
-    // Check if user is the author (only authenticated users can delete)
-    if (
-      !req.userId ||
-      !comment.author ||
-      comment.author.toString() !== req.userId
-    ) {
-      return res
-        .status(403)
-        .json({ message: "Not authorized to delete this comment" });
+    // Check if user is authorized to delete
+    if (comment.author.toString() !== userId) {
+      return res.status(403).json({
+        success: false,
+        error: "Not authorized to delete this comment",
+      });
     }
 
-    // Delete all replies if it's a parent comment
-    if (!comment.isReply) {
-      await Comment.deleteMany({ parentComment: id });
+    const stockId = comment.stock;
+    await comment.deleteOne();
+
+    // Update the stock's lastComment field
+    const stock = await Stock.findById(stockId);
+    if (stock) {
+      // If the deleted comment was the lastComment, find the next most recent comment
+      if (stock.lastComment && stock.lastComment.commentId.toString() === id) {
+        const nextComment = await Comment.findOne({ stock: stockId })
+          .sort({ createdAt: -1 })
+          .populate("author", "username");
+
+        if (nextComment) {
+          stock.lastComment = {
+            content:
+              nextComment.content.length > 200
+                ? nextComment.content.substring(0, 197) + "..."
+                : nextComment.content,
+            author: nextComment.isAnonymous
+              ? "Anonymous"
+              : nextComment.author.username,
+            authorId: nextComment.isAnonymous ? null : nextComment.author._id,
+            date: nextComment.createdAt,
+            commentId: nextComment._id,
+          };
+        } else {
+          stock.lastComment = null;
+        }
+      }
+      stock.commentCount = Math.max(0, (stock.commentCount || 0) - 1);
+      await stock.save();
     }
 
-    // Delete the comment
-    await Comment.findByIdAndDelete(id);
-
-    res.status(200).json({ message: "Comment deleted successfully" });
+    res.json({
+      success: true,
+      data: {},
+    });
   } catch (error) {
     console.error("Error deleting comment:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({
+      success: false,
+      error: "Failed to delete comment",
+    });
   }
 };
 

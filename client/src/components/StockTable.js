@@ -32,8 +32,8 @@ const StockTable = ({ stocks, onUpdate }) => {
 
   // Helper function to format the last activity
   const getLastActivity = (stock) => {
-    if (stock.lastCommentDate) {
-      const date = new Date(stock.lastCommentDate);
+    if (stock.lastComment) {
+      const date = new Date(stock.lastComment.date);
       const now = new Date();
       const diffMs = now - date;
       const diffMins = Math.floor(diffMs / 60000);
@@ -44,7 +44,7 @@ const StockTable = ({ stocks, onUpdate }) => {
       if (diffHours < 24) return `${diffHours}h ago`;
       return `${diffDays}d ago`;
     }
-    return "no replies";
+    return "no comments";
   };
 
   return (
@@ -56,7 +56,7 @@ const StockTable = ({ stocks, onUpdate }) => {
           marginBottom: "5px",
         }}
       >
-        <strong>active discussions</strong>
+        <strong>Stocks</strong>
       </div>
 
       {stocks.map((stock) => {
@@ -99,12 +99,20 @@ const StockTable = ({ stocks, onUpdate }) => {
                 <>
                   <Link to={`/stocks/${stock.symbol}`}>
                     {stock.commentCount}{" "}
-                    {stock.commentCount === 1 ? "reply" : "replies"}
+                    {stock.commentCount === 1 ? "reply" : "comments"}
                   </Link>
                   {" - "}
                   <span style={{ color: "#666" }}>
                     {getLastActivity(stock)}
                   </span>
+                  {stock.lastComment && (
+                    <>
+                      {" - "}
+                      <span style={{ color: "#666", fontSize: "0.9em" }}>
+                        {stock.lastComment.author}: {stock.lastComment.content}
+                      </span>
+                    </>
+                  )}
                 </>
               ) : (
                 <Link to={`/stocks/${stock.symbol}`}>start discussion</Link>
