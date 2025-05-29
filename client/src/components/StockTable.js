@@ -32,87 +32,89 @@ const StockTable = ({ stocks, onUpdate }) => {
 
   return (
     <div className="stock-table-container">
-      <div className="stock-table">
-        <div className="table-header">
-          <div className="col-symbol">Symbol</div>
-          <div className="col-name">Name</div>
-          <div className="col-price">Price</div>
-          <div className="col-change">Change</div>
-          <div className="col-stats">Stats</div>
-          <div className="col-actions">Actions</div>
-        </div>
+      <table className="stock-table">
+        <thead>
+          <tr className="table-header">
+            <th className="col-symbol">Symbol</th>
+            <th className="col-name">Name</th>
+            <th className="col-price">Price</th>
+            <th className="col-change">Change</th>
+            <th className="col-stats">Stats</th>
+            <th className="col-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {stocks.map((stock) => {
+            const isLiked = user && stock.likedBy?.includes(user.id);
+            const isDisliked = user && stock.dislikedBy?.includes(user.id);
 
-        {stocks.map((stock) => {
-          const isLiked = user && stock.likedBy?.includes(user.id);
-          const isDisliked = user && stock.dislikedBy?.includes(user.id);
-
-          return (
-            <div key={stock._id} className="table-row">
-              <div className="col-symbol">
-                <span className="symbol">{stock.symbol}</span>
-              </div>
-              <div className="col-name">{stock.name}</div>
-              <div className="col-price">
-                ${stock.currentPrice?.toFixed(2) || "N/A"}
-              </div>
-              <div className="col-change">
-                <span
-                  className={`percent-change ${
-                    stock.percentChange > 0
-                      ? "positive"
-                      : stock.percentChange < 0
-                      ? "negative"
-                      : ""
-                  }`}
-                >
-                  {stock.percentChange !== undefined &&
-                  stock.percentChange !== null
-                    ? `${stock.percentChange > 0 ? "+" : ""}${parseFloat(
-                        stock.percentChange
-                      ).toFixed(2)}%`
-                    : "N/A"}
-                </span>
-              </div>
-              <div className="col-stats">
-                <div className="stats-container">
-                  <span className="stat-item">
-                    💬 {stock.commentCount || 0}
-                  </span>
-                  <span className="stat-item">👍 {stock.likes || 0}</span>
-                  <span className="stat-item">👎 {stock.dislikes || 0}</span>
-                </div>
-              </div>
-
-              <div className="col-actions">
-                <div className="action-buttons">
-                  <Link
-                    to={`/stocks/${stock.symbol}`}
-                    className="btn btn-primary"
+            return (
+              <tr key={stock._id} className="table-row">
+                <td className="col-symbol">
+                  <span className="symbol">{stock.symbol}</span>
+                </td>
+                <td className="col-name">{stock.name}</td>
+                <td className="col-price">
+                  ${stock.currentPrice?.toFixed(2) || "N/A"}
+                </td>
+                <td className="col-change">
+                  <span
+                    className={`percent-change ${
+                      stock.percentChange > 0
+                        ? "positive"
+                        : stock.percentChange < 0
+                        ? "negative"
+                        : ""
+                    }`}
                   >
-                    Join Discussion
-                  </Link>
-                  <div className="vote-buttons">
-                    <button
-                      className={`vote-btn ${isLiked ? "active liked" : ""}`}
-                      onClick={() => handleLike(stock._id)}
-                    >
-                      👍
-                    </button>
-                    <button
-                      className={`vote-btn ${
-                        isDisliked ? "active disliked" : ""
-                      }`}
-                      onClick={() => handleDislike(stock._id)}
-                    >
-                      👎
-                    </button>
+                    {stock.percentChange !== undefined &&
+                    stock.percentChange !== null
+                      ? `${stock.percentChange > 0 ? "+" : ""}${parseFloat(
+                          stock.percentChange
+                        ).toFixed(2)}%`
+                      : "N/A"}
+                  </span>
+                </td>
+                <td className="col-stats">
+                  <div className="stats-container">
+                    <span className="stat-item">
+                      💬 {stock.commentCount || 0}
+                    </span>
+                    <span className="stat-item">👍 {stock.likes || 0}</span>
+                    <span className="stat-item">👎 {stock.dislikes || 0}</span>
                   </div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+                </td>
+                <td className="col-actions">
+                  <div className="action-buttons">
+                    <Link
+                      to={`/stocks/${stock.symbol}`}
+                      className="btn btn-primary"
+                    >
+                      Join Discussion
+                    </Link>
+                    <div className="vote-buttons">
+                      <button
+                        className={`vote-btn ${isLiked ? "active liked" : ""}`}
+                        onClick={() => handleLike(stock._id)}
+                      >
+                        👍
+                      </button>
+                      <button
+                        className={`vote-btn ${
+                          isDisliked ? "active disliked" : ""
+                        }`}
+                        onClick={() => handleDislike(stock._id)}
+                      >
+                        👎
+                      </button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 };
