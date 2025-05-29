@@ -30,91 +30,89 @@ const StockTable = ({ stocks, onUpdate }) => {
     }
   };
 
+  // Helper function to format the last activity
+  const getLastActivity = (stock) => {
+    if (stock.lastCommentDate) {
+      const date = new Date(stock.lastCommentDate);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+
+      if (diffMins < 60) return `${diffMins}m ago`;
+      if (diffHours < 24) return `${diffHours}h ago`;
+      return `${diffDays}d ago`;
+    }
+    return "no replies";
+  };
+
   return (
     <div className="stock-table-container">
-      <table className="stock-table">
-        <thead>
-          <tr className="table-header">
-            <th className="col-symbol">Symbol</th>
-            <th className="col-name">Name</th>
-            <th className="col-price">Price</th>
-            <th className="col-change">Change</th>
-            <th className="col-stats">Stats</th>
-            <th className="col-actions">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {stocks.map((stock) => {
-            const isLiked = user && stock.likedBy?.includes(user.id);
-            const isDisliked = user && stock.dislikedBy?.includes(user.id);
+      <div
+        style={{
+          padding: "5px 0",
+          borderBottom: "1px solid #ccc",
+          marginBottom: "5px",
+        }}
+      >
+        <strong>active discussions</strong>
+      </div>
 
-            return (
-              <tr key={stock._id} className="table-row">
-                <td className="col-symbol">
-                  <span className="symbol">{stock.symbol}</span>
-                </td>
-                <td className="col-name">{stock.name}</td>
-                <td className="col-price">
-                  ${stock.currentPrice?.toFixed(2) || "N/A"}
-                </td>
-                <td className="col-change">
-                  <span
-                    className={`percent-change ${
-                      stock.percentChange > 0
-                        ? "positive"
-                        : stock.percentChange < 0
-                        ? "negative"
-                        : ""
-                    }`}
-                  >
-                    {stock.percentChange !== undefined &&
-                    stock.percentChange !== null
-                      ? `${stock.percentChange > 0 ? "+" : ""}${parseFloat(
-                          stock.percentChange
-                        ).toFixed(2)}%`
-                      : "N/A"}
+      {stocks.map((stock) => {
+        const isLiked = user && stock.likedBy?.includes(user.id);
+        const isDisliked = user && stock.dislikedBy?.includes(user.id);
+
+        return (
+          <div key={stock._id} className="table-row">
+            <div className="col-symbol">
+              <Link to={`/stocks/${stock.symbol}`}>{stock.symbol}</Link>
+            </div>
+
+            <div className="col-name">{stock.name}</div>
+
+            <div className="col-price">
+              ${stock.currentPrice?.toFixed(2) || "N/A"}
+            </div>
+
+            <div className="col-change">
+              <span
+                className={`percent-change ${
+                  stock.percentChange > 0
+                    ? "positive"
+                    : stock.percentChange < 0
+                    ? "negative"
+                    : ""
+                }`}
+              >
+                {stock.percentChange !== undefined &&
+                stock.percentChange !== null
+                  ? `${stock.percentChange > 0 ? "+" : ""}${parseFloat(
+                      stock.percentChange
+                    ).toFixed(2)}%`
+                  : "N/A"}
+              </span>
+            </div>
+
+            <div className="conversation-info">
+              {stock.commentCount > 0 ? (
+                <>
+                  <Link to={`/stocks/${stock.symbol}`}>
+                    {stock.commentCount}{" "}
+                    {stock.commentCount === 1 ? "reply" : "replies"}
+                  </Link>
+                  {" - "}
+                  <span style={{ color: "#666" }}>
+                    {getLastActivity(stock)}
                   </span>
-                </td>
-                <td className="col-stats">
-                  <div className="stats-container">
-                    <span className="stat-item">
-                      💬 {stock.commentCount || 0}
-                    </span>
-                    <span className="stat-item">👍 {stock.likes || 0}</span>
-                    <span className="stat-item">👎 {stock.dislikes || 0}</span>
-                  </div>
-                </td>
-                <td className="col-actions">
-                  <div className="action-buttons">
-                    <Link
-                      to={`/stocks/${stock.symbol}`}
-                      className="btn btn-primary"
-                    >
-                      Join Discussion
-                    </Link>
-                    <div className="vote-buttons">
-                      <button
-                        className={`vote-btn ${isLiked ? "active liked" : ""}`}
-                        onClick={() => handleLike(stock._id)}
-                      >
-                        👍
-                      </button>
-                      <button
-                        className={`vote-btn ${
-                          isDisliked ? "active disliked" : ""
-                        }`}
-                        onClick={() => handleDislike(stock._id)}
-                      >
-                        👎
-                      </button>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+                </>
+              ) : (
+                <Link to={`/stocks/${stock.symbol}`}>start discussion</Link>
+              )}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };

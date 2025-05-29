@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getAllStocks } from "../services/stockService";
 import StockTable from "../components/StockTable";
-import "../styles/Yahoo90s.css";
+import "../styles/Craigslist.css";
 
 const Home = () => {
   const [stocks, setStocks] = useState([]);
@@ -54,9 +54,9 @@ const Home = () => {
   return (
     <div className="home-container">
       <header className="main-header">
-        <h1>Stock Forum</h1>
+        <h1>stock forum | discussions</h1>
         <p className="tagline">
-          Discuss and share insights about your favorite stocks
+          share insights and discuss stocks with the community
         </p>
       </header>
 
@@ -64,7 +64,7 @@ const Home = () => {
         <input
           type="text"
           className="search-input"
-          placeholder="Search stocks by symbol or name..."
+          placeholder="AAPL, GOOGL..."
           value={searchTerm}
           onChange={handleSearch}
         />
