@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create a shared axios instance
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "http://localhost:5000",
+  baseURL: process.env.REACT_APP_API_URL || "https://stock-forum.onrender.com",
   timeout: 10000,
 });
 
