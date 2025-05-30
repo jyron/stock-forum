@@ -1,9 +1,11 @@
 [build]
-  base = "client"
   command = "npm run build"
   publish = "build"
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200 
+  status = 200
+
+[build.environment]
+  REACT_APP_API_URL = "https://your-backend-url.com"
