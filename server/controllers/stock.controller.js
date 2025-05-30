@@ -58,6 +58,9 @@ exports.getAllStocks = async (req, res) => {
       })
     );
 
+    // Sort stocks by comment count in descending order
+    stocksWithCommentCounts.sort((a, b) => b.commentCount - a.commentCount);
+
     res.status(200).json(stocksWithCommentCounts);
   } catch (error) {
     console.error("Error in getAllStocks:", error);
